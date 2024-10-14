@@ -4,14 +4,12 @@ import static umrao.Constants.ENCRYPTION_ALGO;
 import static umrao.Constants.ENCRYPTION_KEY;
 
 public class EncryptDecrypt {
-
-
-    //"java -jar tomcat-dbcp2-encrypt.jar [-e/-d] [msg]"
-    public static void main(String ... args) {
+    public static void main(String... args) {
         if (args.length != 2) {
-            System.out.println("Tomcat dbcp2 encrypt lib.");
-            //System.exit(0);
+            System.out.println("Wrong input parameter use below \njava -jar tomcat-dbcp2-encrypt.jar -e messageToEncrypt \nor \njava -jar tomcat-dbcp2-encrypt.jar -d messageToDecrypt");
+            System.exit(0);
         }
+
         Encryption c = new Encryption(ENCRYPTION_KEY, ENCRYPTION_ALGO);
         if ("-e".equalsIgnoreCase(args[0])) {
             System.out.println("encrypted: " + c.getEncryptedMessage(args[1]));

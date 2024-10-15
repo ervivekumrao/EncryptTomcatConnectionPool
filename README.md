@@ -1,4 +1,4 @@
-# EncryptDBCP2
+# EncryptTomcatConnectionPool
 
 [How To Build Project]
 1. Open this as project with IntelliJ

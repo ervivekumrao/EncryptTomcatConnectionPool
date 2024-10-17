@@ -1,6 +1,12 @@
 # EncryptTomcatConnectionPool
 
 
+## Features
+1. Supports both `Tomcat DBCP2 Connection Pool` and `Tomcat JDBC Connection Pool` resource encryption.
+2. Database `username`, `password` and JDBC `url` encryption supported.
+3. You can choose either or combination of `username`, `password` and JDBC `url` encryption. Please read `Use Jar For Connection Pool` section for detailed information.
+4. You can even modify your encryption key and algorithms. Read `Change Encryption Algorithm and Key` section for details. For this requirement you need to build custom jar.
+
 ## How To Build Project
 1. Open this as project with `IntelliJ`
 2. Copy latest `tomcat-dbcp.jar` and `tomcat-jdbc.jar` from Tomcat server `apache-tomcat-9.0.96/lib/` to project `libs` directory.

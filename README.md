@@ -45,7 +45,7 @@ Or Run umrao/encrypt/EncryptDecrypt.java from IntelliJ with your input values by
 7. If you want only encrypted username and password then use `tomcat-dbcp2-encrypt-user.jar` jar in your Tomcat `lib` directory and Tomcat `context.xml` should only have encrypted username and password value.
 8. If you want encrypted JDBC URL, username and password then use `tomcat-dbcp2-encrypt-url.jar` jar in your Tomcat `lib` directory and Tomcat `context.xml` should only have encrypted url, username and password value.
 9. Basically these jar are created by commenting `encryption.decryptUsername(reference)` or `encryption.decryptPassword(reference)` or `encryption.decryptURL(reference)` from `org.apache.tomcat.dbcp.dbcp2.EncryptBasicDataSourceFactory` and `org.apache.tomcat.jdbc.pool.EncryptDataSourceFactory` files.
-10. So it is advised to use appropriate jar based on your need otherwise incorrect jar can try decrypt non encrypted data and may result connection pool failure.
+10. So it is advised to use appropriate jar based on your need, otherwise incorrect jar can try decrypt non encrypted data and may result connection pool failure.
 11. In `context.xml` add encrypted JDBC URL, username and password and put corresponding jar into your Tomcat `lib` directory.
 
 

@@ -1,6 +1,17 @@
 # EncryptTomcatConnectionPool
 
 
+## How to use this Project in your Tomcat
+1. If you wish to encrypt only database password then use `tomcat-cp-encrypt-pass.jar` file from release.
+2. If you wish to encrypt both database username and password then use `tomcat-cp-encrypt-user.jar` file from release.
+3. If you wish to encrypt database username, password and JDBC URL then use `tomcat-cp-encrypt-url.jar` file from release.
+4. Encrypt original username, password and JDBC URL values.
+5. Replace encrypted values in your resource configuration as shown in `Choose Factory Based On Connection Pool Type` section.
+6. Copy `tomcat-cp-encrypt-***.jar` jar into tomcat's `apache-tomcat-9.0.96/lib/` directory.
+7. Selecting the appropriate JAR file is indeed critical for the proper functioning. If the `tomcat-cp-encrypt-url.jar` is placed into Tomcat's `lib` directory, it is designed to decrypt not just the password but also the username and JDBC URL at runtime. To avoid database connection failures, ensure that you place correct jar. For more details see section `Use Jar For Connection Pool`.
+8. Restart your Tomcat server.
+
+
 ## Features
 1. Supports both `Tomcat DBCP2 Connection Pool` and `Tomcat JDBC Connection Pool` resource encryption.
 2. Database `username`, `password` and JDBC `url` encryption supported.
@@ -48,15 +59,15 @@ Or Run umrao/encrypt/EncryptDecrypt.java from IntelliJ with your input values by
 3. Use `tomcat-cp-encrypt-user.jar` for username and password decryption.
 4. Use `tomcat-cp-encrypt-url.jar` for JDBC URL, username and password decryption.
 5. All these jars support commandline encryption and decryption but with Tomcat connection pool only specific property decryption is supported.
-6. If you want only encrypted password then use `tomcat-dbcp2-encrypt-pass.jar` jar in your Tomcat `lib` directory and Tomcat `context.xml` should only have encrypted password value.
-7. If you want only encrypted username and password then use `tomcat-dbcp2-encrypt-user.jar` jar in your Tomcat `lib` directory and Tomcat `context.xml` should only have encrypted username and password value.
-8. If you want encrypted JDBC URL, username and password then use `tomcat-dbcp2-encrypt-url.jar` jar in your Tomcat `lib` directory and Tomcat `context.xml` should only have encrypted url, username and password value.
+6. If you want only encrypted password then use `tomcat-dbcp2-encrypt-pass.jar` jar in your Tomcat `lib` directory and Tomcat `Resource` should only have encrypted password value.
+7. If you want only encrypted username and password then use `tomcat-dbcp2-encrypt-user.jar` jar in your Tomcat `lib` directory and Tomcat `Resource` should only have encrypted username and password value.
+8. If you want encrypted JDBC URL, username and password then use `tomcat-dbcp2-encrypt-url.jar` jar in your Tomcat `lib` directory and Tomcat `Resource` should only have encrypted url, username and password value.
 9. Basically these jar are created by commenting `encryption.decryptUsername(reference)` or `encryption.decryptPassword(reference)` or `encryption.decryptURL(reference)` from `org.apache.tomcat.dbcp.dbcp2.EncryptBasicDataSourceFactory` and `org.apache.tomcat.jdbc.pool.EncryptDataSourceFactory` files.
 10. So it is advised to use appropriate jar based on your need, otherwise incorrect jar can try decrypt non encrypted data and may result connection pool failure.
 11. In `context.xml` add encrypted JDBC URL, username and password and put corresponding jar into your Tomcat `lib` directory.
 
 
-## Choose Factory
+## Choose Factory Based On Connection Pool Type
 In `context.xml` add factory according to your connection pool type
 
 #### Tomcat JDBC Connection Pool

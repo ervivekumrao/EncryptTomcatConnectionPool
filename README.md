@@ -92,7 +92,16 @@ Sample resource configuration: Before encryption
               maxWait="10000"
               initialSize="1"/>
 
-Sample resource configuration: After encryption
+Generate encrypted values.
+
+    $ java -jar tomcat-cp-encrypt-url.jar -e jdbc:postgresql://localhost/test
+    encrypted: KLHSRHPKCXU5jx8pb/IbQUoKpuXhgcSC1/G4ecRv0//nOhoRIvY9o3dRT2qnwdJO
+    $ java -jar tomcat-cp-encrypt-url.jar -e testUser                                
+    encrypted: jPI2/yVwtLTKln7DCOdHQQ==
+    $ java -jar tomcat-cp-encrypt-url.jar -e testPassword
+    encrypted: fZ61G7nP5VOfr7HFb5w3SA==
+
+Sample resource configuration after replacing with encrypted values
 
     <Resource name="jdbc/PGDBRef"
               auth="Container"
@@ -129,7 +138,16 @@ Sample resource configuration: Before encryption
               maxWaitMillis="10000"
               initialSize="1"/>
 
-Sample resource configuration: After encryption
+Generate encrypted values.
+
+    $ java -jar tomcat-cp-encrypt-url.jar -e jdbc:postgresql://localhost/test
+    encrypted: KLHSRHPKCXU5jx8pb/IbQUoKpuXhgcSC1/G4ecRv0//nOhoRIvY9o3dRT2qnwdJO
+    $ java -jar tomcat-cp-encrypt-url.jar -e testUser                                
+    encrypted: jPI2/yVwtLTKln7DCOdHQQ==
+    $ java -jar tomcat-cp-encrypt-url.jar -e testPassword
+    encrypted: fZ61G7nP5VOfr7HFb5w3SA==
+
+Sample resource configuration after replacing with encrypted values
 
     <Resource name="jdbc/PGDBRef"
               auth="Container"

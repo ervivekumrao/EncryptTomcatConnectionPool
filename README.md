@@ -79,18 +79,18 @@ https://tomcat.apache.org/tomcat-9.0-doc/jdbc-pool.html
 
 Sample resource configuration: Before encryption
 
-        <Resource name="jdbc/PGDBRef"
-                  auth="Container"
-                  type="javax.sql.DataSource"
-                  driverClassName="org.postgresql.Driver"
-                  factory="org.apache.tomcat.jdbc.pool.EncryptDataSourceFactory"
-                  url="jdbc:postgresql://localhost/test"
-                  username="testUser"
-                  password="testPassword"
-                  maxActive="100"
-                  maxIdle="30"
-                  maxWait="10000"
-                  initialSize="1"/>
+    <Resource name="jdbc/PGDBRef"
+              auth="Container"
+              type="javax.sql.DataSource"
+              driverClassName="org.postgresql.Driver"
+              factory="org.apache.tomcat.jdbc.pool.EncryptDataSourceFactory"
+              url="jdbc:postgresql://localhost/test"
+              username="testUser"
+              password="testPassword"
+              maxActive="100"
+              maxIdle="30"
+              maxWait="10000"
+              initialSize="1"/>
 
 Sample resource configuration: After encryption
 

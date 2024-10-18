@@ -7,6 +7,7 @@
 3. You can choose either or combination of `username`, `password` and JDBC `url` encryption. Please read `Use Jar For Connection Pool` section for detailed information.
 4. You can even modify your encryption key and algorithms. Read `Change Encryption Algorithm and Key` section for details. For this requirement you need to build custom jar.
 
+
 ## How To Build Project
 1. Open this as project with `IntelliJ`
 2. Copy latest `tomcat-dbcp.jar` and `tomcat-jdbc.jar` from Tomcat server `apache-tomcat-9.0.96/lib/` to project `libs` directory.
@@ -14,8 +15,8 @@
 4. Expand libs and right-click on the jar > add as Library...
 
 
-## How To Use Encryption/Decryption  
-Encrypt/decrypt username, password and URL with below command. Use `-e` for encryption and `-d` for decryption. 
+## How To Use Encryption/Decryption
+Encrypt/decrypt username, password and URL with below command. Use `-e` for encryption and `-d` for decryption.
 
     $ java -jar  tomcat-cp-encrypt.jar -e/-d MSG_TO_ENCRYPT_DECRYPT
 
@@ -46,7 +47,7 @@ Or Run umrao/encrypt/EncryptDecrypt.java from IntelliJ with your input values by
 2. Use `tomcat-cp-encrypt-pass.jar` for only password decryption.
 3. Use `tomcat-cp-encrypt-user.jar` for username and password decryption.
 4. Use `tomcat-cp-encrypt-url.jar` for JDBC URL, username and password decryption.
-5. All these jars support commandline encryption and decryption but with Tomcat connection pool only specific property decryption is supported. 
+5. All these jars support commandline encryption and decryption but with Tomcat connection pool only specific property decryption is supported.
 6. If you want only encrypted password then use `tomcat-dbcp2-encrypt-pass.jar` jar in your Tomcat `lib` directory and Tomcat `context.xml` should only have encrypted password value.
 7. If you want only encrypted username and password then use `tomcat-dbcp2-encrypt-user.jar` jar in your Tomcat `lib` directory and Tomcat `context.xml` should only have encrypted username and password value.
 8. If you want encrypted JDBC URL, username and password then use `tomcat-dbcp2-encrypt-url.jar` jar in your Tomcat `lib` directory and Tomcat `context.xml` should only have encrypted url, username and password value.
@@ -57,14 +58,80 @@ Or Run umrao/encrypt/EncryptDecrypt.java from IntelliJ with your input values by
 
 ## Choose Factory
 In `context.xml` add factory according to your connection pool type
-    
-If you want to use Tomcat JDBC Connection Pool then use
+
+#### Tomcat JDBC Connection Pool
 
     factory="org.apache.tomcat.jdbc.pool.EncryptDataSourceFactory"
 
-If you want to use Tomcat DBCP2 Connection Pool then use
+Please refer tomcat official document for detailed list of `Tomcat JDBC Connection Pool` parameters
+https://tomcat.apache.org/tomcat-9.0-doc/jdbc-pool.html
+
+Sample resource configuration: Before encryption
+
+        <Resource name="jdbc/PGDBRef"
+                  auth="Container"
+                  type="javax.sql.DataSource"
+                  driverClassName="org.postgresql.Driver"
+                  factory="org.apache.tomcat.jdbc.pool.EncryptDataSourceFactory"
+                  url="jdbc:postgresql://localhost/test"
+                  username="testUser"
+                  password="testPassword"
+                  maxActive="100"
+                  maxIdle="30"
+                  maxWait="10000"
+                  initialSize="1"/>
+
+Sample resource configuration: After encryption
+
+    <Resource name="jdbc/PGDBRef"
+              auth="Container"
+              type="javax.sql.DataSource"
+              driverClassName="org.postgresql.Driver"
+              factory="org.apache.tomcat.jdbc.pool.EncryptDataSourceFactory"
+              url="KLHSRHPKCXU5jx8pb/IbQUoKpuXhgcSC1/G4ecRv0//nOhoRIvY9o3dRT2qnwdJO"          
+              username="jPI2/yVwtLTKln7DCOdHQQ=="
+              password="fZ61G7nP5VOfr7HFb5w3SA=="
+              maxActive="100"
+              maxIdle="30"
+              maxWait="10000"
+              initialSize="1"/>
+
+#### Tomcat DBCP2 Connection Pool
 
     factory="org.apache.tomcat.dbcp.dbcp2.EncryptBasicDataSourceFactory"
+
+Please refer tomcat official document for detailed list of `Tomcat DBCP2 Connection Pool` parameters
+https://commons.apache.org/proper/commons-dbcp/configuration.html
+
+Sample resource configuration: Before encryption
+
+    <Resource name="jdbc/PGDBRef"
+              auth="Container"
+              type="javax.sql.DataSource"
+              driverClassName="org.postgresql.Driver"
+              factory="org.apache.tomcat.dbcp.dbcp2.EncryptBasicDataSourceFactory"
+              url="jdbc:postgresql://localhost/test"          
+              username="testUser"
+              password="testPassword"
+              maxTotal="100"
+              maxIdle="30"
+              maxWaitMillis="10000"
+              initialSize="1"/>
+
+Sample resource configuration: After encryption
+
+    <Resource name="jdbc/PGDBRef"
+              auth="Container"
+              type="javax.sql.DataSource"
+              driverClassName="org.postgresql.Driver"
+              factory="org.apache.tomcat.dbcp.dbcp2.EncryptBasicDataSourceFactory"
+              url="KLHSRHPKCXU5jx8pb/IbQUoKpuXhgcSC1/G4ecRv0//nOhoRIvY9o3dRT2qnwdJO"          
+              username="jPI2/yVwtLTKln7DCOdHQQ=="
+              password="fZ61G7nP5VOfr7HFb5w3SA=="
+              maxTotal="100"
+              maxIdle="30"
+              maxWaitMillis="10000"
+              initialSize="1"/>
 
 
 ## Loggers
@@ -83,7 +150,7 @@ Modify `umrao.encrypt.Constants` according to your need and rebuild custom jar. 
 
 ## How to build jar
 1. Navigate to `File` > `Project Structure` > `Artifacts` > Under Artifacts click `+` > `JAR` > `From modules with dependency`
-2. Provide name to build, same way you can also modify jar name. 
+2. Provide name to build, same way you can also modify jar name.
 3. Make sure you have included `'EncryptTomcatConnectionPool' compile output` from right side `Available Elements` to left under jar name.
 4. You may need to include `umrao.encrypt.EncryptDecrypt` class as main class.
 5. Now you are ready for build `Build` > `Build artifacts...` > On the popup menu under `Build Artifacts` select the build name you gave in step 2 > under `Action` select `Build`.

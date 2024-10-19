@@ -2,7 +2,7 @@
 
 ## Features
 
-- Supports both `Tomcat DBCP2 Connection Pool` and `Tomcat JDBC Connection Pool` resource attribute encryption.
+- Supports both `Tomcat DBCP2 Connection Pool` and `Tomcat JDBC Connection Pool` datasource attribute encryption.
 - This project support almost all `Tomcat database resource attribute value` encryption and decryption except `factory` attribute. Due to the fact that `factory` is needed for identification of encryption handling class.
 - It is advised to use encryption for database username, password and JDBC URL or password only.
 - You can even modify your encryption key and algorithms for custom encryption jar. Read `Change Encryption Algorithm and Key` section for

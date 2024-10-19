@@ -6,7 +6,7 @@ import static umrao.encrypt.Constants.ENCRYPTION_KEY;
 public class EncryptDecrypt {
     public static void main(String... args) {
         if (args.length != 2) {
-            System.out.println("Wrong input parameter use below \njava -jar tomcat-dbcp2-encrypt.jar -e messageToEncrypt \nor \njava -jar tomcat-dbcp2-encrypt.jar -d messageToDecrypt");
+            System.out.println("Wrong input parameter use below \njava -jar tomcat-cp-encrypt.jar -e messageToEncrypt \nor \njava -jar tomcat-dbcp2-encrypt.jar -d messageToDecrypt");
             System.exit(0);
         }
 

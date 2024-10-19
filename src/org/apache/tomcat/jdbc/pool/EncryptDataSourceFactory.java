@@ -20,13 +20,11 @@ public class EncryptDataSourceFactory extends DataSourceFactory {
 
     @Override
     public Object getObjectInstance(Object obj, Name name, Context nameCtx, Hashtable<?, ?> environment) throws Exception {
-        if (obj instanceof Reference reference) {
+        if (obj instanceof Reference ref) {
             try {
                 Encryption encryption = new Encryption(ENCRYPTION_KEY, ENCRYPTION_ALGO);
-                encryption.decryptUsername(reference);
-                encryption.decryptPassword(reference);
-                encryption.decryptURL(reference);
-                oLog.log(Level.ALL, "Property reference: ", reference);
+                encryption.decryptProperties(ref);
+                oLog.log(Level.ALL, "Property reference: ", ref);
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }

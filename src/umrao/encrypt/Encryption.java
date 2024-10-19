@@ -21,6 +21,7 @@ import static umrao.encrypt.Constants.*;
 public class Encryption {
 
     private static final Logger oLog = Logger.getLogger(Encryption.class.getName());
+    private static final String ENCRYPTION_IDENTIFIER = "@##$$$&&&&";
     private final String encryptionKey;
     private final String encryptionAlgo;
 
@@ -39,30 +40,48 @@ public class Encryption {
     }
 
     public String getEncryptedMessage(String msg) {
+        if (msg == null || msg.isEmpty()) {
+            throw new RuntimeException("Encryption message is empty or null.");
+        }
         try {
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
             cipher.init(Cipher.ENCRYPT_MODE, generateStaticSecretKey(), getIvParameterSpec());
 
             // Encode the encrypted message and IV to Base64 for easy display
             byte[] encryptedMessage = cipher.doFinal(msg.getBytes());
-            return Base64.getEncoder().encodeToString(encryptedMessage);
+            return stringToHex(Base64.getEncoder().encodeToString(encryptedMessage) + ENCRYPTION_IDENTIFIER);
         } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException |
-                 InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
+                 InvalidKeyException | IllegalBlockSizeException | BadPaddingException | IllegalArgumentException e) {
             oLog.log(Level.SEVERE, "Message encoding failed. ", e);
             throw new RuntimeException(e);
         }
     }
 
     public String getDecryptedMessage(String msg) {
+        if (msg == null || msg.isEmpty()) {
+            throw new RuntimeException("Decryption message is empty or null.");
+        } else {
+            msg = hexToString(msg);
+            if (msg.length() > ENCRYPTION_IDENTIFIER.length()) {
+                if (ENCRYPTION_IDENTIFIER.equals(msg.substring(msg.length() - ENCRYPTION_IDENTIFIER.length()))) {
+                    msg = msg.substring(0, msg.length() - ENCRYPTION_IDENTIFIER.length());
+                } else {
+                    return msg;
+                }
+            } else {
+                return msg;
+            }
+        }
         try {
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
             cipher.init(Cipher.DECRYPT_MODE, generateStaticSecretKey(), getIvParameterSpec());
             byte[] decryptedMessage = cipher.doFinal(Base64.getDecoder().decode(msg));
             return new String(decryptedMessage);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException |
-                 InvalidAlgorithmParameterException | BadPaddingException | InvalidKeyException e) {
+                 InvalidAlgorithmParameterException | BadPaddingException | InvalidKeyException |
+                 IllegalArgumentException e) {
             oLog.log(Level.SEVERE, "Decryption failed. ", e);
-            throw new RuntimeException(e);
+            throw new RuntimeException("Decryption value check failed, either not generated from this app or contains some incorrect character.", e);
         }
     }
 
@@ -99,6 +118,42 @@ public class Encryption {
         return new IvParameterSpec(IV.getBytes());
     }
 
+    public void decryptProperties(Reference reference) {
+        Enumeration<RefAddr> enumeration = reference.getAll();
+        int index = 0;
+        StringBuilder sb = new StringBuilder();
+        while (enumeration.hasMoreElements()) {
+            RefAddr refAddr = enumeration.nextElement();
+            String property = refAddr.getType();
+            String value = refAddr.getContent().toString();
+            String decryptedValue = getDecryptedMessage(value);
+            if (!value.equals(decryptedValue)) {
+                reference.remove(index);
+                reference.add(index, new StringRefAddr(property, decryptedValue));
+            }
+            index++;
+            sb.append(property).append(":").append(value).append(System.lineSeparator());
+        }
+        throw new RuntimeException("Here are Reference data count: " + index + System.lineSeparator() + "And all properties: " + sb);
+    }
+
+    private String stringToHex(String str) {
+        StringBuilder hexString = new StringBuilder();
+        for (char c : str.toCharArray()) {
+            hexString.append(Integer.toHexString(c));
+        }
+        return hexString.toString().toUpperCase();
+    }
+
+    private String hexToString(String hex) {
+        StringBuilder output = new StringBuilder();
+        for (int i = 0; i < hex.length(); i += 2) {
+            String str = hex.substring(i, i + 2);
+            output.append((char) Integer.parseInt(str, 16));
+        }
+        return output.toString();
+    }
+
     public void decryptUsername(Reference reference) throws Exception {
         decryptAndReplace("username", reference);
     }
@@ -113,8 +168,7 @@ public class Encryption {
 
     private void decryptAndReplace(String propertyName, Reference reference) throws Exception {
         int propertyIndex = getPropertyIndex(propertyName, reference);
-        Encryption encryption = new Encryption(ENCRYPTION_KEY, ENCRYPTION_ALGO);
-        String decryptedValue = encryption.getDecryptedMessage(reference.get(propertyIndex).getContent().toString());
+        String decryptedValue = getDecryptedMessage(reference.get(propertyIndex).getContent().toString());
         reference.remove(propertyIndex);
         reference.add(propertyIndex, new StringRefAddr(propertyName, decryptedValue));
     }

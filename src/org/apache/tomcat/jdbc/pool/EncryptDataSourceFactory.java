@@ -13,6 +13,7 @@ import static umrao.encrypt.Constants.ENCRYPTION_ALGO;
 import static umrao.encrypt.Constants.ENCRYPTION_KEY;
 
 public class EncryptDataSourceFactory extends DataSourceFactory {
+
     private static final Logger oLog = Logger.getLogger(EncryptDataSourceFactory.class.getName());
 
     public EncryptDataSourceFactory() {
@@ -20,11 +21,10 @@ public class EncryptDataSourceFactory extends DataSourceFactory {
 
     @Override
     public Object getObjectInstance(Object obj, Name name, Context nameCtx, Hashtable<?, ?> environment) throws Exception {
-        if (obj instanceof Reference ref) {
+        if (obj instanceof Reference) {
             try {
-                Encryption encryption = new Encryption(ENCRYPTION_KEY, ENCRYPTION_ALGO);
-                encryption.decryptProperties(ref);
-                oLog.log(Level.ALL, "Property reference: ", ref);
+                new Encryption(ENCRYPTION_KEY, ENCRYPTION_ALGO).decryptProperties((Reference) obj);
+                oLog.log(Level.ALL, "Property reference: ", obj);
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }

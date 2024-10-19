@@ -22,6 +22,7 @@ public class Encryption {
 
     private static final Logger oLog = Logger.getLogger(Encryption.class.getName());
     private static final String ENCRYPTION_IDENTIFIER = "@##$$$&&&&";
+    private static final String HEX_CONVERTED_ENCRYPTION_IDENTIFIER = "40232324242426262626";
     private final String encryptionKey;
     private final String encryptionAlgo;
 
@@ -61,7 +62,11 @@ public class Encryption {
         if (msg == null || msg.isEmpty()) {
             throw new RuntimeException("Decryption message is empty or null.");
         } else {
-            msg = hexToString(msg);
+            if (msg.length() > HEX_CONVERTED_ENCRYPTION_IDENTIFIER.length() && HEX_CONVERTED_ENCRYPTION_IDENTIFIER.equals(msg.substring(msg.length() - HEX_CONVERTED_ENCRYPTION_IDENTIFIER.length()))) {
+                msg = hexToString(msg);
+            } else {
+                return msg;
+            }
             if (msg.length() > ENCRYPTION_IDENTIFIER.length()) {
                 if (ENCRYPTION_IDENTIFIER.equals(msg.substring(msg.length() - ENCRYPTION_IDENTIFIER.length()))) {
                     msg = msg.substring(0, msg.length() - ENCRYPTION_IDENTIFIER.length());
@@ -125,16 +130,22 @@ public class Encryption {
         while (enumeration.hasMoreElements()) {
             RefAddr refAddr = enumeration.nextElement();
             String property = refAddr.getType();
-            String value = refAddr.getContent().toString();
-            String decryptedValue = getDecryptedMessage(value);
-            if (!value.equals(decryptedValue)) {
-                reference.remove(index);
-                reference.add(index, new StringRefAddr(property, decryptedValue));
+            if (property != null && !property.isEmpty()) {
+                if (refAddr.getContent() != null) {
+                    String value = refAddr.getContent().toString();
+                    if (!value.isEmpty()) {
+                        String decryptedValue = getDecryptedMessage(value);
+                        if (!value.equals(decryptedValue)) {
+                            reference.remove(index);
+                            reference.add(index, new StringRefAddr(property, decryptedValue));
+                        }
+                    }
+                    sb.append(property).append(":").append(value).append(System.lineSeparator());
+                }
             }
             index++;
-            sb.append(property).append(":").append(value).append(System.lineSeparator());
         }
-        throw new RuntimeException("Here are Reference data count: " + index + System.lineSeparator() + "And all properties: " + sb);
+        oLog.log(Level.SEVERE, "Here are Reference data count: " + index + System.lineSeparator() + "And all properties: " + sb);
     }
 
     private String stringToHex(String str) {
@@ -152,36 +163,5 @@ public class Encryption {
             output.append((char) Integer.parseInt(str, 16));
         }
         return output.toString();
-    }
-
-    public void decryptUsername(Reference reference) throws Exception {
-        decryptAndReplace("username", reference);
-    }
-
-    public void decryptPassword(Reference reference) throws Exception {
-        decryptAndReplace("password", reference);
-    }
-
-    public void decryptURL(Reference reference) throws Exception {
-        decryptAndReplace("url", reference);
-    }
-
-    private void decryptAndReplace(String propertyName, Reference reference) throws Exception {
-        int propertyIndex = getPropertyIndex(propertyName, reference);
-        String decryptedValue = getDecryptedMessage(reference.get(propertyIndex).getContent().toString());
-        reference.remove(propertyIndex);
-        reference.add(propertyIndex, new StringRefAddr(propertyName, decryptedValue));
-    }
-
-    private int getPropertyIndex(String propertyName, Reference reference) throws Exception {
-        Enumeration<RefAddr> enumeration = reference.getAll();
-
-        for (int index = 0; enumeration.hasMoreElements(); index++) {
-            RefAddr adder = enumeration.nextElement();
-            if (adder.getType().compareTo(propertyName) == 0) {
-                return index;
-            }
-        }
-        throw new Exception("The Property " + propertyName + " not found in configuration. " + "\nThe reference Object is: " + reference);
     }
 }

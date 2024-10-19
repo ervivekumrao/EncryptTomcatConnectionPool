@@ -1,6 +1,5 @@
 package org.apache.tomcat.dbcp.dbcp2;
 
-
 import umrao.encrypt.Encryption;
 
 import javax.naming.Context;
@@ -14,7 +13,6 @@ import java.util.logging.Logger;
 import static umrao.encrypt.Constants.ENCRYPTION_ALGO;
 import static umrao.encrypt.Constants.ENCRYPTION_KEY;
 
-
 public class EncryptBasicDataSourceFactory extends BasicDataSourceFactory {
 
     private static final Logger oLog = Logger.getLogger(EncryptBasicDataSourceFactory.class.getName());
@@ -24,11 +22,10 @@ public class EncryptBasicDataSourceFactory extends BasicDataSourceFactory {
 
     @Override
     public Object getObjectInstance(Object obj, Name name, Context nameCtx, Hashtable<?, ?> environment) throws SQLException {
-        if (obj instanceof Reference ref) {
+        if (obj instanceof Reference) {
             try {
-                Encryption encryption = new Encryption(ENCRYPTION_KEY, ENCRYPTION_ALGO);
-                encryption.decryptProperties(ref);
-                oLog.log(Level.ALL, "Property reference: ", ref);
+                new Encryption(ENCRYPTION_KEY, ENCRYPTION_ALGO).decryptProperties((Reference) obj);
+                oLog.log(Level.ALL, "Property reference: ", obj);
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
